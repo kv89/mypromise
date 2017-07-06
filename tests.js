@@ -52,4 +52,6 @@ function displayValue( value ){
 	console.log(' --> ', value);
 }
 console.log("chained then ...");
-pp.then(tenTimes).then(tenTimes).then(displayValue);
+
+
+pp.then(tenTimes).then(tenTimes).then().then().then(displayValue);
