@@ -1,0 +1,8 @@
+{
+  "name": "myypromise",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "async": "^2.5.0"
+  }
+}
