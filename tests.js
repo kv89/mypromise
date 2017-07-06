@@ -10,7 +10,7 @@ function doSomething(){// define
 		global.setTimeout(function(){
 			fun_output = 42;
 			resolve( fun_output );
-		}, 3000);
+		}, 2000);
 	});
 }
 
@@ -18,6 +18,7 @@ var pp = doSomething();
 
 
 //	1. fails as callback is not initialized !!
+/*
 	global.setTimeout(function(){
 		pp.then(function(value){// call with then
 			// console.log('then:listener part called ..');
@@ -25,15 +26,30 @@ var pp = doSomething();
 		
 		});
 	}, 0);
-
-
+*/
 
 
 // 2. !!
-/*pp.then(function(value){// call with then
-	console.log("1. -> ", value);
-});
+/*
+	pp.then(function(value){// call with then
+		console.log("1. -> ", value);
+	});
 
-pp.then(function(value){// call with then
-	console.log("2. -> ", value);
-});*/
+	pp.then(function(value){// call with then
+		console.log("2. -> ", value);
+	});
+ */
+
+
+// 3. chained then !!
+
+function tenTimes( value ){
+	displayValue( value );
+	return value *= 10;
+}
+
+function displayValue( value ){
+	console.log(' --> ', value);
+}
+console.log("chained then ...");
+pp.then(tenTimes).then(tenTimes).then(displayValue);

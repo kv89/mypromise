@@ -5,8 +5,15 @@ function MyPromise( fn ){// executer function !
 	var deferred;
 	var value;
 
-	this.then = function( onResolved ){
-		handle( onResolved );
+	this.then = function( onResolved ){// this to return a promise now !!
+		// handle( onResolved );
+
+		return new MyPromise(function( resolve ){
+			handle({// this def / implementation has changed now !!
+				onResolved: onResolved,
+				resolve: resolve
+			});
+		});
 	};
 
 	function resolve( newValue ){
@@ -19,13 +26,22 @@ function MyPromise( fn ){// executer function !
 		}
 	}
 
-	function handle( callback ){// callback can hold __null__ ie, deferred or __onResolved__ function
+	function handle( handler ){
 		// console.log("state - ", state);
 		if( state === 'pending' ) {
-			deferred = callback;
+			deferred = handler;
 			return;
 		}
-		callback( value );
+
+		if(!handler.onResolved) {
+			handler.resolve( value );// value is ready but 1st then not yet called, so executing 1st then's promise ... brain it.. :)
+			return; // don't forget this !!
+		}
+
+		var retVal = handler.onResolved( value );
+		handler.resolve( retVal );// inception, the movie!!  might help here  :D
+
+		// callback( value );
 	}
 
 	fn(resolve);
