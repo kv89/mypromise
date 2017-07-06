@@ -1,59 +1,34 @@
 'use strict';
 
-// var Pending = 0;
-// var	Fulfilled = 1;
-// var	Rejected = 2;
+function MyPromise( fn ){// executer function !
+	var state = "pending";
+	var deferred;
+	var value;
 
-function MyPromise( fn ){// may be executer function !
-	console.log('MyPromise called ..');
-	var callback = null;
-	this.then = function( cb ){
-		console.log('then called ..');
-		callback = cb;
+	this.then = function( onResolved ){
+		handle( onResolved );
 	};
 
-	function resolve(value){
-		console.log('MyPromise -> resolve called ..');
-		setTimeout(function(){ // next tick so that callback will get initialized !
-			console.log('MyPromise -> resolve : setTimeout called ..');
-			callback(value);
-		}, 0);
+	function resolve( newValue ){
+		value = newValue;
+		state = "resolved";
+		// console.log("on resolved state - ", state);
+
+		if( deferred ) { // here, if deferred == null, means then is not called by user, if deferred != null then it is equal to callback - ie. onResolved, ... 
+			handle( deferred );// deferred != null, so it has callback assigned, so execute it... as state is resolved !!
+		}
+	}
+
+	function handle( callback ){// callback can hold __null__ ie, deferred or __onResolved__ function
+		// console.log("state - ", state);
+		if( state === 'pending' ) {
+			deferred = callback;
+			return;
+		}
+		callback( value );
 	}
 
 	fn(resolve);
 }
 
-// use promise in your methods !!
-
-function doSomething(){// define
-	console.log('doSomething called ..');
-	return new MyPromise(function( resolve ){
-		console.log('MyPromise executor called ..' );
-		var fun_output = 42;
-		resolve( fun_output );
-	});
-}
-
-var pp = doSomething();
-
-// fails as callback is not initialized !!
-// global.setTimeout(function(){
-// 	pp.then(function(value){// call with then
-// 		// console.log('then:listener part called ..');
-// 		console.log(" -> ", value);
-	
-// 	});
-// }, 0);
-
-
-console.log("calling then noww ...... ");
-console.log("calling then noww ...... ");
-console.log("calling then noww ...... ");
-console.log("calling then noww ...... ");
-pp.then(function(value){// call with then
-	console.log('then:listener part called ..');
-	console.log(" -> ", value);
-});
-
 module.exports = MyPromise;
-console.log("module exported ....");
